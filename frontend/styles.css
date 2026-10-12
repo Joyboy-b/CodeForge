@@ -1,15 +1,17 @@
 :root {
-  color-scheme: light;
-  --bg: #f4f5f7;
-  --panel: #ffffff;
-  --ink: #151923;
-  --muted: #667084;
-  --line: #dfe4ed;
-  --accent: #1769e0;
-  --accent-strong: #0f4fad;
-  --gold: #c88a1b;
-  --danger: #b54242;
-  --shadow: 0 18px 45px rgba(38, 52, 44, 0.12);
+  color-scheme: dark;
+  --bg: #070812;
+  --panel: #111625;
+  --panel-strong: #171d31;
+  --ink: #f3f7ff;
+  --muted: #9aa7c4;
+  --line: #27314e;
+  --accent: #7c5cff;
+  --accent-strong: #5a3fe0;
+  --cyan: #42d8ff;
+  --gold: #f0b84d;
+  --danger: #ff6b7a;
+  --shadow: 0 22px 60px rgba(0, 0, 0, 0.42);
 }
 
 * {
@@ -18,7 +20,9 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  background:
+    radial-gradient(circle at top left, rgba(124, 92, 255, 0.2), transparent 34%),
+    linear-gradient(135deg, #070812 0%, #0c1020 46%, #14102a 100%);
   color: var(--ink);
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -52,12 +56,13 @@ button:hover {
 }
 
 .sidebar {
-  background: #151923;
+  background: linear-gradient(180deg, #080a14 0%, #11162a 100%);
   color: white;
   padding: 24px 18px;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  border-right: 1px solid rgba(124, 92, 255, 0.28);
 }
 
 .brand {
@@ -72,9 +77,10 @@ button:hover {
   display: grid;
   place-items: center;
   border-radius: 8px;
-  background: #7dd3fc;
-  color: #151923;
+  background: linear-gradient(135deg, var(--cyan), var(--accent));
+  color: #050711;
   font-weight: 900;
+  box-shadow: 0 0 24px rgba(66, 216, 255, 0.28);
 }
 
 .brand span,
@@ -87,7 +93,7 @@ button:hover {
 
 .sidebar .brand span,
 .sidebar .api-status {
-  color: #aebcb4;
+  color: #9aa7c4;
 }
 
 .nav-tabs {
@@ -104,13 +110,14 @@ button:hover {
 }
 
 .tab {
-  color: #cfd8d2;
+  color: #c9d4ee;
 }
 
 .tab.is-active,
 .tab:hover {
-  background: #242b38;
-  border-color: #3a4658;
+  background: rgba(124, 92, 255, 0.16);
+  border-color: rgba(66, 216, 255, 0.36);
+  color: white;
 }
 
 .workspace {
@@ -142,7 +149,7 @@ button:hover {
 }
 
 .ghost-button {
-  color: var(--accent);
+  color: var(--cyan);
   border-color: var(--line);
   text-align: center;
 }
@@ -161,29 +168,31 @@ button:hover {
   padding: 28px;
   border-radius: 8px;
   background:
-    linear-gradient(100deg, rgba(21, 25, 35, 0.9), rgba(23, 105, 224, 0.58)),
+    linear-gradient(100deg, rgba(5, 7, 17, 0.94), rgba(60, 34, 140, 0.72), rgba(66, 216, 255, 0.22)),
     url("https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1600&q=80");
   background-size: cover;
   background-position: center;
   color: white;
   box-shadow: var(--shadow);
+  border: 1px solid rgba(66, 216, 255, 0.22);
 }
 
 .hero-panel p {
   max-width: 620px;
-  color: #e8eee9;
+  color: #dbe7ff;
 }
 
 .level-ring {
   width: 118px;
   height: 118px;
   flex: 0 0 auto;
-  border: 8px solid #7dd3fc;
+  border: 8px solid var(--cyan);
   border-radius: 50%;
   display: grid;
   place-items: center;
   align-content: center;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(8, 10, 20, 0.62);
+  box-shadow: inset 0 0 24px rgba(124, 92, 255, 0.28), 0 0 30px rgba(66, 216, 255, 0.22);
 }
 
 .level-ring span {
@@ -215,7 +224,7 @@ button:hover {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
-  box-shadow: 0 10px 26px rgba(38, 52, 44, 0.07);
+  box-shadow: var(--shadow);
 }
 
 .panel {
@@ -249,14 +258,14 @@ button:hover {
 .bar {
   height: 10px;
   border-radius: 999px;
-  background: #edf1f6;
+  background: #080b17;
   overflow: hidden;
 }
 
 .bar span {
   display: block;
   height: 100%;
-  background: var(--accent);
+  background: linear-gradient(90deg, var(--accent), var(--cyan));
 }
 
 .item,
@@ -264,7 +273,7 @@ button:hover {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 14px;
-  background: #fbfcff;
+  background: var(--panel-strong);
 }
 
 .item {
@@ -290,16 +299,16 @@ button:hover {
   min-height: 26px;
   padding: 0 9px;
   border-radius: 999px;
-  background: #eaf2ff;
-  color: var(--accent-strong);
+  background: rgba(66, 216, 255, 0.12);
+  color: var(--cyan);
   font-weight: 800;
   font-size: 0.78rem;
   white-space: nowrap;
 }
 
 .pill.gold {
-  background: #fff4d8;
-  color: #8b5a00;
+  background: rgba(240, 184, 77, 0.14);
+  color: var(--gold);
 }
 
 label {
@@ -316,7 +325,7 @@ textarea {
   border: 1px solid var(--line);
   border-radius: 6px;
   padding: 11px 12px;
-  background: white;
+  background: #090c18;
   color: var(--ink);
 }
 
@@ -352,7 +361,7 @@ textarea {
   max-width: 360px;
   padding: 14px 16px;
   border-radius: 8px;
-  background: #151923;
+  background: #10162a;
   color: white;
   opacity: 0;
   transform: translateY(12px);
@@ -377,7 +386,7 @@ textarea {
 }
 
 .inline-action {
-  color: var(--accent);
+  color: var(--cyan);
 }
 
 @media (max-width: 980px) {

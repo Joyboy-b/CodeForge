@@ -90,14 +90,14 @@ export default function App() {
   if (loading && !dashboard) {
     return (
       <SafeAreaView style={styles.centered}>
-        <ActivityIndicator size="large" color="#1769e0" />
+        <ActivityIndicator size="large" color="#42d8ff" />
       </SafeAreaView>
     );
   }
 
   return (
     <SafeAreaView style={styles.screen}>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.kicker}>CodeForge</Text>
         <Text style={styles.title}>{dashboard?.user.display_name}</Text>
@@ -173,28 +173,28 @@ function title(value: string) {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#f4f5f7" },
-  centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#f4f5f7" },
+  screen: { flex: 1, backgroundColor: "#070812" },
+  centered: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#070812" },
   content: { padding: 20, gap: 16 },
-  kicker: { color: "#1769e0", fontWeight: "800", textTransform: "uppercase" },
-  title: { color: "#151923", fontSize: 34, fontWeight: "900" },
-  subtitle: { color: "#667084", fontSize: 16, lineHeight: 22 },
+  kicker: { color: "#42d8ff", fontWeight: "800", textTransform: "uppercase" },
+  title: { color: "#f3f7ff", fontSize: 34, fontWeight: "900" },
+  subtitle: { color: "#9aa7c4", fontSize: 16, lineHeight: 22 },
   metrics: { flexDirection: "row", gap: 10 },
-  metric: { flex: 1, backgroundColor: "white", borderRadius: 8, padding: 14 },
-  metricLabel: { color: "#667084", fontWeight: "700" },
-  metricValue: { color: "#151923", fontSize: 22, fontWeight: "900", marginTop: 4 },
-  card: { backgroundColor: "white", borderRadius: 8, padding: 16, gap: 12 },
-  cardTitle: { color: "#151923", fontSize: 18, fontWeight: "900" },
-  body: { color: "#667084", lineHeight: 21 },
-  input: { borderColor: "#dfe4ed", borderWidth: 1, borderRadius: 6, padding: 12 },
-  button: { backgroundColor: "#1769e0", borderRadius: 6, minHeight: 44, alignItems: "center", justifyContent: "center" },
+  metric: { flex: 1, backgroundColor: "#111625", borderColor: "#27314e", borderWidth: 1, borderRadius: 8, padding: 14 },
+  metricLabel: { color: "#9aa7c4", fontWeight: "700" },
+  metricValue: { color: "#f3f7ff", fontSize: 22, fontWeight: "900", marginTop: 4 },
+  card: { backgroundColor: "#111625", borderColor: "#27314e", borderWidth: 1, borderRadius: 8, padding: 16, gap: 12 },
+  cardTitle: { color: "#f3f7ff", fontSize: 18, fontWeight: "900" },
+  body: { color: "#9aa7c4", lineHeight: 21 },
+  input: { borderColor: "#27314e", borderWidth: 1, borderRadius: 6, padding: 12, color: "#f3f7ff", backgroundColor: "#090c18" },
+  button: { backgroundColor: "#7c5cff", borderRadius: 6, minHeight: 44, alignItems: "center", justifyContent: "center" },
   buttonText: { color: "white", fontWeight: "900" },
-  buttonSecondary: { borderColor: "#1769e0", borderWidth: 1, borderRadius: 6, minHeight: 44, alignItems: "center", justifyContent: "center" },
-  buttonSecondaryText: { color: "#1769e0", fontWeight: "900" },
-  quest: { borderColor: "#dfe4ed", borderWidth: 1, borderRadius: 8, padding: 12, gap: 6 },
-  questTitle: { color: "#151923", fontWeight: "900" },
-  pill: { color: "#0f4fad", fontWeight: "900" },
-  statRow: { flexDirection: "row", justifyContent: "space-between", borderBottomColor: "#edf1f6", borderBottomWidth: 1, paddingVertical: 8 },
-  statLabel: { color: "#667084", fontWeight: "700" },
-  statValue: { color: "#151923", fontWeight: "900" },
+  buttonSecondary: { borderColor: "#42d8ff", borderWidth: 1, borderRadius: 6, minHeight: 44, alignItems: "center", justifyContent: "center" },
+  buttonSecondaryText: { color: "#42d8ff", fontWeight: "900" },
+  quest: { borderColor: "#27314e", borderWidth: 1, borderRadius: 8, padding: 12, gap: 6, backgroundColor: "#171d31" },
+  questTitle: { color: "#f3f7ff", fontWeight: "900" },
+  pill: { color: "#42d8ff", fontWeight: "900" },
+  statRow: { flexDirection: "row", justifyContent: "space-between", borderBottomColor: "#27314e", borderBottomWidth: 1, paddingVertical: 8 },
+  statLabel: { color: "#9aa7c4", fontWeight: "700" },
+  statValue: { color: "#f3f7ff", fontWeight: "900" },
 });
