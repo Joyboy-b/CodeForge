@@ -165,6 +165,10 @@
                   <h3 id="exerciseTitle">Select an Exercise</h3>
                 </div>
                 <div class="compiler-actions">
+                  <select id="languageSelect" class="language-select" aria-label="Compiler language">
+                    <option value="python">Python</option>
+                    <option value="javascript">JavaScript</option>
+                  </select>
                   <button class="ghost-button" id="resetCodeButton">Reset</button>
                   <button id="runCodeButton">Run Tests</button>
                 </div>
@@ -174,7 +178,7 @@
               <div class="test-list" id="exerciseTests"></div>
 
               <label class="editor-label">
-                JavaScript Solution
+                <span id="editorLabel">Python Solution</span>
                 <textarea id="codeEditor" class="code-editor" spellcheck="false"></textarea>
               </label>
 
@@ -231,6 +235,7 @@
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>

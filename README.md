@@ -69,7 +69,7 @@ When running on a physical phone, set `API_BASE` in `mobile/App.tsx` to your com
 - AI coaching and quest generation with OpenAI API fallback behavior.
 - Redis-backed coach-note caching when `REDIS_URL` is configured.
 - React Native mobile client for dashboard, coaching, sessions, quests, and stats.
-- Browser-based JavaScript coding exercises with a worker-backed test runner and timeout protection.
+- Browser-based Python and JavaScript coding exercises with test runner and timeout protection.
 
 ## Main API Routes
 

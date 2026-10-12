@@ -328,7 +328,8 @@ label {
 }
 
 input,
-textarea {
+textarea,
+select {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -340,6 +341,14 @@ textarea {
 textarea {
   min-height: 92px;
   resize: vertical;
+}
+
+.language-select {
+  width: auto;
+  min-height: 42px;
+  color: var(--ink);
+  background: #090c18;
+  font-weight: 800;
 }
 
 .form-row {

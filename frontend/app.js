@@ -7,6 +7,8 @@ const state = {
   progress: [],
   coach: null,
   selectedExercise: 0,
+  selectedLanguage: "python",
+  pyodide: null,
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -16,8 +18,14 @@ const exercises = [
     title: "Reverse a String",
     difficulty: "E-Rank",
     prompt: "Return a new string with the characters in reverse order.",
-    functionName: "reverseString",
-    starter: `function reverseString(value) {\n  // Return the reversed string.\n  return value;\n}`,
+    functions: {
+      python: "reverse_string",
+      javascript: "reverseString",
+    },
+    starters: {
+      python: `def reverse_string(value):\n    # Return the reversed string.\n    return value`,
+      javascript: `function reverseString(value) {\n  // Return the reversed string.\n  return value;\n}`,
+    },
     tests: [
       { input: ["gate"], expected: "etag" },
       { input: ["CodeForge"], expected: "egroFedoC" },
@@ -28,8 +36,14 @@ const exercises = [
     title: "Count Vowels",
     difficulty: "D-Rank",
     prompt: "Return the number of vowels in the provided string. Treat uppercase and lowercase vowels the same.",
-    functionName: "countVowels",
-    starter: `function countVowels(value) {\n  // Count a, e, i, o, u.\n  return 0;\n}`,
+    functions: {
+      python: "count_vowels",
+      javascript: "countVowels",
+    },
+    starters: {
+      python: `def count_vowels(value):\n    # Count a, e, i, o, u.\n    return 0`,
+      javascript: `function countVowels(value) {\n  // Count a, e, i, o, u.\n  return 0;\n}`,
+    },
     tests: [
       { input: ["shadow monarch"], expected: 4 },
       { input: ["RUST"], expected: 1 },
@@ -40,8 +54,14 @@ const exercises = [
     title: "Two Sum",
     difficulty: "C-Rank",
     prompt: "Return the indexes of two numbers that add up to the target. Return them in ascending order.",
-    functionName: "twoSum",
-    starter: `function twoSum(nums, target) {\n  // Return [firstIndex, secondIndex].\n  return [];\n}`,
+    functions: {
+      python: "two_sum",
+      javascript: "twoSum",
+    },
+    starters: {
+      python: `def two_sum(nums, target):\n    # Return [first_index, second_index].\n    return []`,
+      javascript: `function twoSum(nums, target) {\n  // Return [firstIndex, secondIndex].\n  return [];\n}`,
+    },
     tests: [
       { input: [[2, 7, 11, 15], 9], expected: [0, 1] },
       { input: [[3, 2, 4], 6], expected: [1, 2] },
@@ -52,8 +72,14 @@ const exercises = [
     title: "Valid Parentheses",
     difficulty: "B-Rank",
     prompt: "Return true when every opening bracket is closed in the correct order.",
-    functionName: "isValid",
-    starter: `function isValid(value) {\n  // Supports (), [], and {}.\n  return false;\n}`,
+    functions: {
+      python: "is_valid",
+      javascript: "isValid",
+    },
+    starters: {
+      python: `def is_valid(value):\n    # Supports (), [], and {}.\n    return False`,
+      javascript: `function isValid(value) {\n  // Supports (), [], and {}.\n  return false;\n}`,
+    },
     tests: [
       { input: ["()[]{}"], expected: true },
       { input: ["([{}])"], expected: true },
@@ -232,6 +258,7 @@ function renderRecommendations(plans) {
 
 function renderExercises() {
   const exercise = exercises[state.selectedExercise];
+  const functionName = exercise.functions[state.selectedLanguage];
   $("#exerciseList").innerHTML = exercises
     .map(
       (item, index) => `
@@ -246,18 +273,19 @@ function renderExercises() {
   $("#exerciseDifficulty").textContent = exercise.difficulty;
   $("#exerciseTitle").textContent = exercise.title;
   $("#exercisePrompt").textContent = exercise.prompt;
+  $("#editorLabel").textContent = `${title(state.selectedLanguage)} Solution`;
   $("#exerciseTests").innerHTML = exercise.tests
-    .map((test) => `<span class="test-pill">${exercise.functionName}(${test.input.map(formatValue).join(", ")})</span>`)
+    .map((test) => `<span class="test-pill">${functionName}(${test.input.map(formatValue).join(", ")})</span>`)
     .join("");
 
   if (!$("#codeEditor").value.trim()) {
-    $("#codeEditor").value = exercise.starter;
+    $("#codeEditor").value = exercise.starters[state.selectedLanguage];
   }
 
   document.querySelectorAll("[data-exercise-index]").forEach((button) => {
     button.addEventListener("click", () => {
       state.selectedExercise = Number(button.dataset.exerciseIndex);
-      $("#codeEditor").value = exercises[state.selectedExercise].starter;
+      $("#codeEditor").value = exercises[state.selectedExercise].starters[state.selectedLanguage];
       $("#compilerOutput").textContent = "Run tests to see results.";
       renderExercises();
     });
@@ -267,14 +295,13 @@ function renderExercises() {
 async function runExerciseTests() {
   const exercise = exercises[state.selectedExercise];
   const output = $("#compilerOutput");
-  output.textContent = "Running tests...";
+  output.textContent = state.selectedLanguage === "python" && !state.pyodide ? "Loading Python runtime..." : `Running ${title(state.selectedLanguage)} tests...`;
 
   try {
-    const result = await runCodeInWorker({
-      source: $("#codeEditor").value,
-      functionName: exercise.functionName,
-      tests: exercise.tests,
-    });
+    const result =
+      state.selectedLanguage === "python"
+        ? await runPythonTests(exercise, $("#codeEditor").value)
+        : await runJavaScriptTests(exercise, $("#codeEditor").value);
 
     output.innerHTML = result.results
       .map((testResult, index) => {
@@ -297,7 +324,42 @@ async function runExerciseTests() {
   }
 }
 
-function runCodeInWorker(payload) {
+async function runPythonTests(exercise, source) {
+  const pyodide = await getPyodide();
+  pyodide.globals.set("user_code", source);
+  pyodide.globals.set("function_name", exercise.functions.python);
+  pyodide.globals.set("tests_json", JSON.stringify(exercise.tests));
+
+  const resultsJson = await withTimeout(
+    pyodide.runPythonAsync(`
+import json
+
+namespace = {}
+exec(user_code, namespace)
+fn = namespace.get(function_name)
+if not callable(fn):
+    raise NameError(f"Function {function_name} was not found.")
+
+tests = json.loads(tests_json)
+results = []
+for test in tests:
+    actual = fn(*test["input"])
+    expected = test["expected"]
+    results.append({
+        "actual": actual,
+        "expected": expected,
+        "pass": actual == expected,
+    })
+
+json.dumps(results)
+`),
+    2500,
+  );
+
+  return { results: JSON.parse(resultsJson) };
+}
+
+function runJavaScriptTests(exercise, source) {
   return new Promise((resolve, reject) => {
     const workerSource = `
       self.onmessage = (event) => {
@@ -332,8 +394,34 @@ function runCodeInWorker(payload) {
         reject(new Error(event.data.error));
       }
     };
-    worker.postMessage(payload);
+    worker.postMessage({
+      source,
+      functionName: exercise.functions.javascript,
+      tests: exercise.tests,
+    });
   });
+}
+
+async function getPyodide() {
+  if (state.pyodide) {
+    return state.pyodide;
+  }
+  if (typeof loadPyodide !== "function") {
+    throw new Error("Python runtime could not load. Check your internet connection and refresh.");
+  }
+  state.pyodide = await loadPyodide({
+    indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/",
+  });
+  return state.pyodide;
+}
+
+function withTimeout(promise, milliseconds) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      window.setTimeout(() => reject(new Error("Execution timed out. Check for infinite loops.")), milliseconds);
+    }),
+  ]);
 }
 
 function formatValue(value) {
@@ -413,8 +501,14 @@ function wireEvents() {
   });
 
   $("#runCodeButton").addEventListener("click", runExerciseTests);
+  $("#languageSelect").addEventListener("change", (event) => {
+    state.selectedLanguage = event.target.value;
+    $("#codeEditor").value = exercises[state.selectedExercise].starters[state.selectedLanguage];
+    $("#compilerOutput").textContent = "Run tests to see results.";
+    renderExercises();
+  });
   $("#resetCodeButton").addEventListener("click", () => {
-    $("#codeEditor").value = exercises[state.selectedExercise].starter;
+    $("#codeEditor").value = exercises[state.selectedExercise].starters[state.selectedLanguage];
     $("#compilerOutput").textContent = "Run tests to see results.";
   });
 
