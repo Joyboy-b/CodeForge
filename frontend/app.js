@@ -6,9 +6,62 @@ const state = {
   quests: [],
   progress: [],
   coach: null,
+  selectedExercise: 0,
 };
 
 const $ = (selector) => document.querySelector(selector);
+
+const exercises = [
+  {
+    title: "Reverse a String",
+    difficulty: "E-Rank",
+    prompt: "Return a new string with the characters in reverse order.",
+    functionName: "reverseString",
+    starter: `function reverseString(value) {\n  // Return the reversed string.\n  return value;\n}`,
+    tests: [
+      { input: ["gate"], expected: "etag" },
+      { input: ["CodeForge"], expected: "egroFedoC" },
+      { input: [""], expected: "" },
+    ],
+  },
+  {
+    title: "Count Vowels",
+    difficulty: "D-Rank",
+    prompt: "Return the number of vowels in the provided string. Treat uppercase and lowercase vowels the same.",
+    functionName: "countVowels",
+    starter: `function countVowels(value) {\n  // Count a, e, i, o, u.\n  return 0;\n}`,
+    tests: [
+      { input: ["shadow monarch"], expected: 4 },
+      { input: ["RUST"], expected: 1 },
+      { input: ["crypt"], expected: 0 },
+    ],
+  },
+  {
+    title: "Two Sum",
+    difficulty: "C-Rank",
+    prompt: "Return the indexes of two numbers that add up to the target. Return them in ascending order.",
+    functionName: "twoSum",
+    starter: `function twoSum(nums, target) {\n  // Return [firstIndex, secondIndex].\n  return [];\n}`,
+    tests: [
+      { input: [[2, 7, 11, 15], 9], expected: [0, 1] },
+      { input: [[3, 2, 4], 6], expected: [1, 2] },
+      { input: [[3, 3], 6], expected: [0, 1] },
+    ],
+  },
+  {
+    title: "Valid Parentheses",
+    difficulty: "B-Rank",
+    prompt: "Return true when every opening bracket is closed in the correct order.",
+    functionName: "isValid",
+    starter: `function isValid(value) {\n  // Supports (), [], and {}.\n  return false;\n}`,
+    tests: [
+      { input: ["()[]{}"], expected: true },
+      { input: ["([{}])"], expected: true },
+      { input: ["(]"], expected: false },
+      { input: ["((())"], expected: false },
+    ],
+  },
+];
 
 function showToast(message) {
   const toast = $("#toast");
@@ -52,6 +105,7 @@ async function loadApp() {
     renderQuests();
     renderProgress();
     renderProfile();
+    renderExercises();
   } catch (error) {
     $("#apiStatus").textContent = "API offline";
     showToast(`Could not reach API: ${error.message}`);
@@ -176,6 +230,116 @@ function renderRecommendations(plans) {
     .join("");
 }
 
+function renderExercises() {
+  const exercise = exercises[state.selectedExercise];
+  $("#exerciseList").innerHTML = exercises
+    .map(
+      (item, index) => `
+        <button class="exercise-choice ${index === state.selectedExercise ? "is-active" : ""}" data-exercise-index="${index}">
+          <strong>${item.title}</strong>
+          <span>${item.difficulty}</span>
+        </button>
+      `,
+    )
+    .join("");
+
+  $("#exerciseDifficulty").textContent = exercise.difficulty;
+  $("#exerciseTitle").textContent = exercise.title;
+  $("#exercisePrompt").textContent = exercise.prompt;
+  $("#exerciseTests").innerHTML = exercise.tests
+    .map((test) => `<span class="test-pill">${exercise.functionName}(${test.input.map(formatValue).join(", ")})</span>`)
+    .join("");
+
+  if (!$("#codeEditor").value.trim()) {
+    $("#codeEditor").value = exercise.starter;
+  }
+
+  document.querySelectorAll("[data-exercise-index]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.selectedExercise = Number(button.dataset.exerciseIndex);
+      $("#codeEditor").value = exercises[state.selectedExercise].starter;
+      $("#compilerOutput").textContent = "Run tests to see results.";
+      renderExercises();
+    });
+  });
+}
+
+async function runExerciseTests() {
+  const exercise = exercises[state.selectedExercise];
+  const output = $("#compilerOutput");
+  output.textContent = "Running tests...";
+
+  try {
+    const result = await runCodeInWorker({
+      source: $("#codeEditor").value,
+      functionName: exercise.functionName,
+      tests: exercise.tests,
+    });
+
+    output.innerHTML = result.results
+      .map((testResult, index) => {
+        const status = testResult.pass ? "PASS" : "FAIL";
+        const className = testResult.pass ? "pass" : "fail";
+        return `
+          <div class="result-line ${className}">
+            <strong>${status}</strong>
+            <span>Test ${index + 1}: expected ${formatValue(testResult.expected)}, received ${formatValue(testResult.actual)}</span>
+          </div>
+        `;
+      })
+      .join("");
+
+    if (result.results.every((testResult) => testResult.pass)) {
+      showToast(`${exercise.title} cleared.`);
+    }
+  } catch (error) {
+    output.innerHTML = `<div class="result-line fail"><strong>ERROR</strong><span>${error.message}</span></div>`;
+  }
+}
+
+function runCodeInWorker(payload) {
+  return new Promise((resolve, reject) => {
+    const workerSource = `
+      self.onmessage = (event) => {
+        const { source, functionName, tests } = event.data;
+        const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+        try {
+          const factory = new Function(source + "\\nreturn typeof " + functionName + " === 'function' ? " + functionName + " : null;");
+          const fn = factory();
+          if (!fn) throw new Error("Function " + functionName + " was not found.");
+          const results = tests.map((test) => {
+            const actual = fn(...test.input);
+            return { actual, expected: test.expected, pass: same(actual, test.expected) };
+          });
+          self.postMessage({ ok: true, results });
+        } catch (error) {
+          self.postMessage({ ok: false, error: error.message });
+        }
+      };
+    `;
+    const worker = new Worker(URL.createObjectURL(new Blob([workerSource], { type: "text/javascript" })));
+    const timeout = window.setTimeout(() => {
+      worker.terminate();
+      reject(new Error("Execution timed out. Check for infinite loops."));
+    }, 1200);
+
+    worker.onmessage = (event) => {
+      window.clearTimeout(timeout);
+      worker.terminate();
+      if (event.data.ok) {
+        resolve(event.data);
+      } else {
+        reject(new Error(event.data.error));
+      }
+    };
+    worker.postMessage(payload);
+  });
+}
+
+function formatValue(value) {
+  return JSON.stringify(value);
+}
+
 function planType(type) {
   return type === "meal" ? "Shipping Plan" : "Focus Block";
 }
@@ -248,6 +412,12 @@ function wireEvents() {
     await loadApp();
   });
 
+  $("#runCodeButton").addEventListener("click", runExerciseTests);
+  $("#resetCodeButton").addEventListener("click", () => {
+    $("#codeEditor").value = exercises[state.selectedExercise].starter;
+    $("#compilerOutput").textContent = "Run tests to see results.";
+  });
+
   $("#progressForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     await api(`/users/${USER_ID}/progress`, { method: "POST", body: JSON.stringify(formPayload(event.currentTarget)) });
@@ -289,4 +459,5 @@ function setToday() {
 
 setToday();
 wireEvents();
+renderExercises();
 loadApp();

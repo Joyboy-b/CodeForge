@@ -208,7 +208,8 @@ button:hover {
 
 .metric-grid,
 .two-column,
-.plan-grid {
+.plan-grid,
+.exercise-layout {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
@@ -216,6 +217,11 @@ button:hover {
 
 .two-column {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
+.exercise-layout {
+  grid-template-columns: 280px minmax(0, 1fr);
   align-items: start;
 }
 
@@ -243,7 +249,9 @@ button:hover {
 .stat-bars,
 .list,
 .form,
-.plan-grid {
+.plan-grid,
+.exercise-list,
+.test-list {
   display: grid;
   gap: 12px;
 }
@@ -389,6 +397,107 @@ textarea {
   color: var(--cyan);
 }
 
+.exercise-choice {
+  min-height: 64px;
+  display: grid;
+  gap: 4px;
+  justify-items: start;
+  align-content: center;
+  background: var(--panel-strong);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  text-align: left;
+}
+
+.exercise-choice span {
+  color: var(--cyan);
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.exercise-choice.is-active,
+.exercise-choice:hover {
+  border-color: rgba(66, 216, 255, 0.62);
+  background: rgba(124, 92, 255, 0.18);
+}
+
+.compiler-panel {
+  gap: 16px;
+  display: grid;
+}
+
+.compiler-heading {
+  align-items: flex-start;
+}
+
+.compiler-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.exercise-prompt {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.test-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.test-pill {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #090c18;
+  color: #c9d4ee;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 0.82rem;
+}
+
+.editor-label {
+  color: var(--cyan);
+}
+
+.code-editor {
+  min-height: 300px;
+  resize: vertical;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  tab-size: 2;
+}
+
+.compiler-output {
+  min-height: 120px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #050711;
+  color: var(--muted);
+  font-family: "Cascadia Code", Consolas, monospace;
+  display: grid;
+  gap: 8px;
+}
+
+.result-line {
+  display: grid;
+  gap: 4px;
+}
+
+.result-line.pass strong {
+  color: var(--cyan);
+}
+
+.result-line.fail strong {
+  color: var(--danger);
+}
+
 @media (max-width: 980px) {
   .app-shell {
     grid-template-columns: 1fr;
@@ -411,7 +520,9 @@ textarea {
 
   .metric-grid,
   .two-column,
-  .plan-grid {
+  .plan-grid,
+  .exercise-layout,
+  .test-list {
     grid-template-columns: 1fr;
   }
 }

@@ -20,6 +20,7 @@
           <button class="tab is-active" data-view="dashboard">Dashboard</button>
           <button class="tab" data-view="log">Log</button>
           <button class="tab" data-view="quests">Quests</button>
+          <button class="tab" data-view="exercises">Exercises</button>
           <button class="tab" data-view="progress">Progress</button>
           <button class="tab" data-view="planner">Planner</button>
           <button class="tab" data-view="profile">Profile</button>
@@ -144,6 +145,40 @@
                 <h3>Quest Log</h3>
               </div>
               <div class="list" id="questList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="exercisesView">
+          <div class="exercise-layout">
+            <section class="panel exercise-sidebar">
+              <div class="panel-heading">
+                <h3>Dungeon Exercises</h3>
+              </div>
+              <div class="exercise-list" id="exerciseList"></div>
+            </section>
+
+            <section class="panel compiler-panel">
+              <div class="panel-heading compiler-heading">
+                <div>
+                  <p class="eyebrow" id="exerciseDifficulty">Loading</p>
+                  <h3 id="exerciseTitle">Select an Exercise</h3>
+                </div>
+                <div class="compiler-actions">
+                  <button class="ghost-button" id="resetCodeButton">Reset</button>
+                  <button id="runCodeButton">Run Tests</button>
+                </div>
+              </div>
+
+              <p class="exercise-prompt" id="exercisePrompt"></p>
+              <div class="test-list" id="exerciseTests"></div>
+
+              <label class="editor-label">
+                JavaScript Solution
+                <textarea id="codeEditor" class="code-editor" spellcheck="false"></textarea>
+              </label>
+
+              <div class="compiler-output" id="compilerOutput">Run tests to see results.</div>
             </section>
           </div>
         </section>
