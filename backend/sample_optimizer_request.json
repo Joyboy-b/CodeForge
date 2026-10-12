@@ -1,0 +1,44 @@
+{
+  "calorie_goal": 2300,
+  "macro_targets": {
+    "protein": 170,
+    "carbs": 230,
+    "fat": 70
+  },
+  "dietary_restrictions": ["peanut"],
+  "available_groceries": ["chicken", "rice", "broccoli", "greek yogurt", "oats", "banana"],
+  "recovery_time_hours": 28,
+  "progress_score": 0.62,
+  "meal_plans": [
+    {
+      "name": "Lean Bulk Bowl",
+      "calories": 2260,
+      "protein": 176,
+      "carbs": 238,
+      "fat": 64,
+      "ingredients": ["chicken", "rice", "broccoli", "greek yogurt"]
+    },
+    {
+      "name": "High Fat Reset",
+      "calories": 2500,
+      "protein": 135,
+      "carbs": 165,
+      "fat": 118,
+      "ingredients": ["eggs", "avocado", "peanut butter"]
+    }
+  ],
+  "workout_plans": [
+    {
+      "name": "Upper Hypertrophy",
+      "intensity": 7,
+      "duration_minutes": 58,
+      "muscle_groups": ["chest", "back", "shoulders"]
+    },
+    {
+      "name": "Heavy Legs",
+      "intensity": 10,
+      "duration_minutes": 80,
+      "muscle_groups": ["quads", "hamstrings", "glutes"]
+    }
+  ]
+}

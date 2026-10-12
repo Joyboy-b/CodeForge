@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "CodeForge",
+    "slug": "codeforge",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "codeforge",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#151923"
+      }
+    }
+  }
+}

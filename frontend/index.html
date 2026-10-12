@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeForge</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">CF</div>
+          <div>
+            <strong>CodeForge</strong>
+            <span>Coding RPG</span>
+          </div>
+        </div>
+        <nav class="nav-tabs" aria-label="Primary">
+          <button class="tab is-active" data-view="dashboard">Dashboard</button>
+          <button class="tab" data-view="log">Log</button>
+          <button class="tab" data-view="quests">Quests</button>
+          <button class="tab" data-view="progress">Progress</button>
+          <button class="tab" data-view="planner">Planner</button>
+          <button class="tab" data-view="profile">Profile</button>
+        </nav>
+        <div class="api-status" id="apiStatus">Checking API...</div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Today</p>
+            <h1 id="pageTitle">Dashboard</h1>
+          </div>
+          <button class="ghost-button" id="refreshButton">Refresh</button>
+        </header>
+
+        <section class="view is-active" id="dashboardView">
+          <div class="hero-panel">
+            <div>
+              <p class="eyebrow">Current Developer</p>
+              <h2 id="heroName">Loading...</h2>
+              <p id="heroGoal"></p>
+            </div>
+            <div class="level-ring">
+              <span id="heroLevel">0</span>
+              <small>level</small>
+            </div>
+          </div>
+
+          <div class="metric-grid">
+            <article class="metric"><span>XP</span><strong id="xpValue">0</strong></article>
+            <article class="metric"><span>Streak</span><strong id="streakValue">0 days</strong></article>
+            <article class="metric"><span>Focus Minutes</span><strong id="calorieValue">0 / 0</strong></article>
+            <article class="metric"><span>Tasks Shipped</span><strong id="proteinValue">0 / 0</strong></article>
+          </div>
+
+          <div class="two-column">
+            <section class="panel">
+              <div class="panel-heading">
+                <h3>RPG Stats</h3>
+              </div>
+              <div class="stat-bars" id="statBars"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-heading">
+                <h3>AI Coach</h3>
+                <button id="coachButton">Refresh</button>
+              </div>
+              <p class="coach-note" id="coachNote">Loading coaching note...</p>
+            </section>
+          </div>
+
+          <section class="panel">
+            <div class="panel-heading">
+              <h3>Active Quests</h3>
+            </div>
+            <div class="list" id="activeQuests"></div>
+          </section>
+
+          <div class="two-column">
+            <section class="panel">
+              <div class="panel-heading">
+                <h3>Recent Coding Sessions</h3>
+              </div>
+              <div class="list" id="recentWorkouts"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-heading">
+                <h3>Recent Shipments</h3>
+              </div>
+              <div class="list" id="recentMeals"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="logView">
+          <div class="two-column">
+            <form class="panel form" id="workoutForm">
+              <h3>Log Coding Session</h3>
+              <label>Session Name<input name="name" required placeholder="API routes" /></label>
+              <label>Focus Area<input name="muscle_group" required placeholder="Backend" /></label>
+              <div class="form-row">
+                <label>Difficulty<input name="intensity" required type="number" min="1" max="10" value="7" /></label>
+                <label>Minutes<input name="duration_minutes" required type="number" min="1" max="240" value="55" /></label>
+              </div>
+              <button type="submit">Log Session</button>
+            </form>
+
+            <form class="panel form" id="mealForm">
+              <h3>Log Shipped Work</h3>
+              <label>Name<input name="name" required placeholder="Auth refactor" /></label>
+              <div class="form-row">
+                <label>Focus Minutes<input name="calories" required type="number" min="1" value="80" /></label>
+                <label>Tasks<input name="protein" required type="number" min="0" value="1" /></label>
+              </div>
+              <div class="form-row">
+                <label>Commits<input name="carbs" required type="number" min="0" value="2" /></label>
+                <label>Bugs Fixed<input name="fat" required type="number" min="0" value="0" /></label>
+              </div>
+              <button type="submit">Log Shipment</button>
+            </form>
+          </div>
+        </section>
+
+        <section class="view" id="questsView">
+          <div class="two-column">
+            <form class="panel form" id="questForm">
+              <h3>Create Quest</h3>
+              <label>Title<input name="title" required placeholder="Bug Hunt" /></label>
+              <label>Description<textarea name="description" required placeholder="Fix one bug and document the root cause."></textarea></label>
+              <div class="form-row">
+                <label>XP Reward<input name="xp_reward" required type="number" min="1" value="100" /></label>
+                <label>Due Date<input name="due_on" required type="date" /></label>
+              </div>
+              <button type="submit">Create Quest</button>
+              <button type="button" class="ghost-button inline-action" id="generateQuestButton">Generate AI Quest</button>
+            </form>
+            <section class="panel">
+              <div class="panel-heading">
+                <h3>Quest Log</h3>
+              </div>
+              <div class="list" id="questList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="progressView">
+          <div class="two-column">
+            <form class="panel form" id="progressForm">
+              <h3>Skill Check-In</h3>
+              <label>Code Quality<input name="body_weight" required type="number" min="1" max="100" step="0.1" value="70" /></label>
+              <label>Project Completion %<input name="body_fat_percentage" required type="number" min="0" max="100" step="0.1" value="40" /></label>
+              <label>Confidence Score<input name="strength_score" required type="number" min="0" max="100" step="0.1" value="75" /></label>
+              <button type="submit">Save Check-In</button>
+            </form>
+            <section class="panel">
+              <div class="panel-heading">
+                <h3>Progress History</h3>
+              </div>
+              <div class="list" id="progressList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="plannerView">
+          <section class="panel">
+            <div class="panel-heading">
+              <h3>Recommended Plan</h3>
+              <button id="recommendButton">Generate</button>
+            </div>
+            <div class="plan-grid" id="recommendations"></div>
+          </section>
+        </section>
+
+        <section class="view" id="profileView">
+          <form class="panel form wide-form" id="profileForm">
+              <h3>Coding Goals</h3>
+            <label>Display Name<input name="display_name" required /></label>
+              <label>Project Goal<input name="physique_goal" required /></label>
+            <div class="form-row">
+              <label>Daily Focus Minutes<input name="calorie_goal" required type="number" min="1" /></label>
+              <label>Tasks Goal<input name="protein" required type="number" min="0" /></label>
+            </div>
+            <div class="form-row">
+              <label>Commits Goal<input name="carbs" required type="number" min="0" /></label>
+              <label>Bugs Goal<input name="fat" required type="number" min="0" /></label>
+            </div>
+            <button type="submit">Save Goals</button>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./app.js"></script>
+  </body>
+</html>
